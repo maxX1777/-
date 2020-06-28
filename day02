@@ -1,0 +1,21 @@
+import urllib.request
+import string
+
+def get_method_params():
+    #字符串拼接，以后可以直接爬取别的内容
+    url = "http://aspx.sc.chinaz.com/query.aspx?keyword="
+    name = "帅哥"
+    final_url = url + name
+    print(final_url)
+    encoded_final_url = urllib.parse.quote(final_url,safe=string.printable)
+    print(encoded_final_url)
+    response = urllib.request.urlopen(encoded_final_url)
+    print(response)
+    data = response.read().decode()
+    print(data)
+    with open("baidu2.html", "w", encoding="UTF-8")as f:
+        f.write(data)
+    #python只支持ascii码0-127.。。不支持中文
+    #url转译
+
+get_method_params()
