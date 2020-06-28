@@ -1,0 +1,22 @@
+import urllib.request
+import string
+import urllib.parse
+def get_params():
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36 Edg/83.0.478.50',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+    }
+    url = "https://www.baidu.com/s?"
+    params = {
+        "wd":"中文"
+    }
+    str_params = urllib.parse.urlencode(params)
+    print(url + str_params)
+    final_url = url + str_params
+    req = urllib.request.Request(url=final_url, headers=headers)
+    responce = urllib.request.urlopen(req)
+    data = responce.read().decode("UTF-8")
+    print(data)
+    with open("baidu.html","w",encoding = "UTF-8")as f:
+        f.write(data)
+get_params()
