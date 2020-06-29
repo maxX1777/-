@@ -1,0 +1,20 @@
+import urllib.request
+import string
+import urllib.parse
+
+
+def handler_opener():
+    # 系统的urlopen并没有添加代理的功能所以需要自己写
+    # urlopen的原理————handler和opener
+    # 所以我们也要写handler和opener。（为什么不直接用urlopen?,因为urlopen不能直接使用代理）
+    url = "https://www.baidu.com/"
+    # 创建handler
+    handler = urllib.request.HTTPHandler()
+    # 创建opener
+    opener_1 = urllib.request.build_opener(handler)
+    response = opener_1.open(url)
+    data = response.read()
+    print(data)
+
+
+handler_opener()
