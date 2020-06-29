@@ -1,0 +1,29 @@
+import urllib.request
+import string
+import urllib.parse
+
+
+def create_proxy_opener():
+    # 系统的urlopen并没有添加代理的功能所以需要自己写
+    # urlopen的原理————handler和opener
+    # 所以我们也要写handler和opener。（为什么不直接用urlopen?,因为urlopen不能直接使用代理）
+    url = "https://blog.csdn.net/meteor_93/article/details/106599061?utm_medium=distribute.pc_feed.none-task-blog-alirecmd-5.nonecase&depth_1-utm_source=distribute.pc_feed.none-task-blog-alirecmd-5.nonecase&request_id="
+
+    #添加代理
+    proxy = {
+        #免费IP的写法
+        "http":"http//125.108.78.60:9000"
+        #"http":"125.108.78.60:9000"
+        #付费代理写法
+        #"http":"username":123@115
+    }
+    # 创建handler(代理处理器)
+    proxy_handler = urllib.request.ProxyHandler(proxy)
+    # 创建opener
+    opener_1 = urllib.request.build_opener(proxy_handler)
+    data = opener_1.open(url).read()
+
+    print(data)
+
+
+create_proxy_opener()
