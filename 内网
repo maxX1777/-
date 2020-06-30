@@ -1,0 +1,16 @@
+import urllib.request
+import string
+import urllib.parse
+import random
+import requests
+
+def auth_innerinternet():
+    user = 'admin'
+    pwd = 'admin123'
+    inner_url = "http://192.168.192.66"
+    pwd_manager = urllib.request.HTTPPasswordMgrWithDefaultRealm()
+    pwd_manager.add_password(None,inner_url,user,pwd)
+    auth_handlers = urllib.request.HTTPBasicAuthHandler(pwd_manager)
+    opener = urllib.request.build_opener(auth_handlers)
+    opener.open(inner_url)
+auth_innerinternet()
