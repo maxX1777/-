@@ -1,0 +1,44 @@
+import io
+import os
+import sys
+import json
+
+
+
+target_url = 'https://www.nvshens.net/article/'+str(4) + '.html'
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36"
+}
+
+data = requests.get(target_url, headers = headers).content.decode()
+
+#第一步，转解析类型。 用xpath 首先要把data转成xpath能接收的数据类型
+xpath_data = etree.HTML(data)
+#print(type(xpath_data))
+#xpath语法1. 节点 /
+#         2. 跨节点  //
+#         3.精确的标签
+#result = xpath_data.xpath('/html/head/title/text()')
+#result = xpath_data.xpath('//a/text()')
+#result = xpath_data.xpath('//a[@href="/g/33219/"]/text()')
+result_text = xpath_data.xpath('//a[@target="blank"]/text()')
+result_url = xpath_data.xpath('//a[@target="blank"]/@href')
+news_list = []
+#print(result_text)
+#print(result_url)
+data_list = []
+for index, title in enumerate(result_text):
+    news = {}
+    #print(index)
+    #print(title)
+    news['title'] = title
+    news['url'] = 'https://www.nvshens.net' + result_url[index]
+    data_list.append(news)
+#print(data_list)
+    #news = {}
+    #news['title'] =
+#print(type(result))#返回的是列表
+
+data_str = json.dumps(data_list)
+with open('03test.json','w',encoding = 'utf-8') as f:
+    f.write(data_str)
