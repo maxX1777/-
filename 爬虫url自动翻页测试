@@ -1,0 +1,14 @@
+#测试url_list
+#base_url = "https://sh.esf.leju.com/house/n1/"
+
+
+def get_url_list():
+    base_url = "https://sh.esf.leju.com/house/n{}/"
+    url_list = []
+    for i in range(1, 5):
+        url = base_url.format(i)
+        url_list.append(url)
+        print(url)
+    return url_list
+
+get_url_list()
