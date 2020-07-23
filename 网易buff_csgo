@@ -1,0 +1,13 @@
+#ajax接口数据url格式如下
+#https://buff.163.com/api/market/goods?game=csgo&page_num=1&category=weapon_knife_survival_bowie&_=1595496383847
+
+#https://buff.163.com/api/market/goods?game=csgo&page_num=2&category=weapon_knife_survival_bowie&_=1595496383849
+
+#https://buff.163.com/api/market/goods?game=csgo&page_num=3&category=weapon_knife_survival_bowie&_=1595496530921
+
+#https://buff.163.com/api/market/goods?game=csgo&page_num=4&category=weapon_knife_survival_bowie&_=1595496530923
+
+#https://buff.163.com/api/market/goods?game=csgo&page_num=1&category=weapon_knife_m9_bayonet&_=1595499718310
+#去掉后面的数字不影响数据返回
+
+to be done
