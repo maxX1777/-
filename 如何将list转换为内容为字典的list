@@ -1,0 +1,7 @@
+list1 = ['ewrwe',2,3,4]
+
+la = ['name','area','2323','sdasa']
+lb = [list1[0],list1[1],list1[2],list1[3]]
+d = dict(zip(la,lb))
+print(d)
+#类型变换后可以存入mongoDB
