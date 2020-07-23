@@ -1,0 +1,81 @@
+#只爬了两页做测试，后续如需爬取全部，加上每次请求的时间间隔，代理池和IP池即可
+import requests
+import string
+import random
+import json
+from lxml import etree
+import os
+from io import BytesIO
+import urllib.request
+import pymongo
+
+
+
+class BookSpider(object):
+    def __init__(self):
+        self.base_url = "https://sh.esf.leju.com/house/n{}/"
+        self.i = 0
+        self.j = 0
+        self.headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36'}
+    #爬取多页内容
+    def get_url_list(self):
+        url_list = []
+        for i in range(1,3):
+            url = self.base_url.format(i)
+            url_list.append(url)
+        return url_list
+#发请求
+    def send_request(self,url):
+        data = requests.get(url, headers = self.headers).content.decode()
+        return data
+
+    # 将数据存入mongoDB
+    def save_in_mongoDB(self,list1,list2,list3,list4):
+        mongo_py = pymongo.MongoClient()
+        db = mongo_py['maitian']
+        collection = db['zufang']
+        list_final = []
+        print(len(list1))
+        for self.i in range(36):
+            la = ['name','price','area','detail']
+            lb = [list1[self.i],list2[self.i],list3[self.i],list4[self.i]]
+            d = dict(zip(la, lb))
+            self.i = self.i + 1
+            #print(item)
+            list_final.append(d)
+        collection.insert_many(list_final)
+
+#解析数据
+    def parse_xpath_data(self,data):
+        parse_data = etree.HTML(data)
+        houselist = parse_data.xpath('//div[@class="title_in"]/a/text()')
+        houseprice = parse_data.xpath('//span[@style="margin-left: 7px;"]/text()')
+        housearea = parse_data.xpath('//span[@class="community_name"]/a/text()')
+        housedetail = parse_data.xpath('.//div[@class="house_info clearfix"]/span[1]/text()')
+
+        #next_url = parse_data.xpath('//div[@class="page"]/a[@class="next"]/@href')
+        #print(houselist[0])
+        self.save_in_mongoDB(houselist,houseprice,housearea,housedetail)
+        #json.dump(houselist, open("01shanghai.json", 'w'))
+
+
+        #print(houselist)
+        #解析出所有的书的相关信息
+
+        #print(book_list)
+#保存数据
+    def save_data(self,data):
+        json.dump(data,open("01shanghai.json",'w'))
+
+    def run(self):
+        url_list = self.get_url_list()
+        for url in url_list:
+            print(url)
+            data = self.send_request(url)
+            self.parse_xpath_data(data)
+            #self.save_data(data)
+        #print(self.data_list)
+
+
+
+BookSpider().run()
