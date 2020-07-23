@@ -1,0 +1,36 @@
+import requests
+import json
+
+header = {
+    'Accept' : "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+    'User-Agent' : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36"
+}
+
+
+url = 'https://buff.163.com/api/market/goods/price_history/buff?game=csgo&goods_id=771976&currency=CNY&days=30&_=1595400449953'
+#cookie要用字典类型或者cookiejar
+cookie = '_ntes_nnid=945c26fb3039d31e99ff9597102474b2,1579249719221; _ntes_nuid=945c26fb3039d31e99ff9597102474b2; mail_psc_fingerprint=e4bc670cddfbe347b317190361e8e608; nts_mail_user=yichenxuxyc@163.com:-1:1; Device-Id=dGhknPQrF1eZOQD8xTvE; _ga=GA1.2.1014128513.1595227554; Locale-Supported=zh-Hans; game=csgo; _gid=GA1.2.1145760361.1595400256; NTES_YD_SESS=qY8hzcKLk.4r5FqoRjRT..ZeJkBQIyM6hTWdrixJHWiADJLIDjktuVuSzOgjZhq92pwZqyfiap_OqscoweMuyBJaTdM3XVVL5bwur02_S1Lc4q2CXeSo8e8stsGOyX3REw_mMkAdMTswQr.NSEiSPhVoD7aCWgrIr.S3wH41gyhFcIbVGe6FhAS3o3BakQ9a.GyXbi9S68PCOrcag0Aj3cajQUY3JfNYbyBnVKST3OF4o; S_INFO=1595400335|0|3&80##|19975288075; P_INFO=19975288075|1595400335|1|netease_buff|00&99|null&null&null#zhj&330800#10#0|&0||19975288075; session=1-iwOi5zdPcfm9s4gxB5oJCWIcSWamE9tkROsOu_6nEVAE2042870615; csrf_token=ImNlYzhmYjk1NDgzYmU0OTBmZWZlMjRiNWMzZDFhOGQzM2U1YWZkZTki.EfmMHg.dVp-ZTN6RVf_TDbOzcG32yCLb7E; _gat_gtag_UA_109989484_1=1'
+cookie_dict = {
+}
+cookie_list = cookie.split('; ')
+for cookie in cookie_list:
+    cookie_dict[cookie.split('=')[0]] = cookie.split('=')[1]
+#print(cookie_dict)
+response = requests.get(url, headers=header, timeout=10, cookies=cookie_dict)
+
+data = response.content.decode()
+
+#with open('test_wangyi.html','w',encoding='UTF-8')as f:
+    #f.write(data)
+result = json.loads(response.text)
+result_dict = []
+for item in result['data']['price_history']:
+    #timestamp = item['created_at']
+    #content = item['content']
+    #print(item)
+    result_dict.append(item)
+
+print(result_dict[0][0])
+    #print(content)
+#with open('test_wangyi2.csv','w',encoding='UTF-8') as f:
+    #f.write(str(result))
