@@ -11,46 +11,82 @@
 #去掉后面的数字不影响数据返回
 #已实现一个武器的价格爬取，明天实现所有想爬的武器的自动爬取。将所有武器的关键词存在字典。然后拼接URL实现
 to be done
-
+#2020.07.25 加入代理池和UA池后的效果更新，接下去只需要拼接各个武器的url。
 import requests
 import json
 import time
+import random
 
 class buff_csgo(object):
     def __init__(self):
-        self.base_url = 'https://buff.163.com/api/market/goods?game=csgo&page_num=1&category=weapon_knife_m9_bayonet&sort_by=price.asc&_='
+        self.base_url = 'https://buff.163.com/api/market/goods?game=csgo&page_num=1&category=weapon_ak47&sort_by=price.asc&_=1595668567958'
         self.headers = {
     'Accept' : "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
     'User-Agent' : "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36"
 }
-        self.cookie = '_ntes_nnid=945c26fb3039d31e99ff9597102474b2,1579249719221; _ntes_nuid=945c26fb3039d31e99ff9597102474b2; mail_psc_fingerprint=e4bc670cddfbe347b317190361e8e608; nts_mail_user=yichenxuxyc@163.com:-1:1; Device-Id=dGhknPQrF1eZOQD8xTvE; _ga=GA1.2.1014128513.1595227554; _gid=GA1.2.1145760361.1595400256; Locale-Supported=zh-Hans; game=csgo; NTES_YD_SESS=RVOgW0XF2cQhtjhj0Yv6kq25BS50GkwRFaIEsf89mIfD490e4zw3CZC.lHVzJBR5YrtJRPvfFrLHRMGptTiCPy9FaEioqZZ0N_tCsSYL.g0G1RYcqT.pWTkBMKOxHXaMle8cHKn3dDKm2sXQ.Kf.7BZp4jFcIVsesX.otm1gVPBQ85lKRtHHHNW5HSWnzFwPqINt_16APqlNs1gvpOusL1qz2ndo9vQd_Py6Zk.aoHh1p; S_INFO=1595575520|0|3&80##|19975288075; P_INFO=19975288075|1595575520|1|netease_buff|00&99|null&null&null#zhj&330800#10#0|&0|null|19975288075; session=1-NhqPjeAvxgHv4T1cqyh-YeC6GmmVnRNQ2Fi_s29VRwFz2042870615; _gat_gtag_UA_109989484_1=1; csrf_token=ImM1Y2JiM2I5YzkyM2MxN2MyYzFkYTZjOWZjNzg3MTUzZmZiZGZlNTMi.EfwlVA.yqq9Zrqq0sML-Nc_QTfp4-Knj2A'
+        self.cookie = '_ntes_nnid=945c26fb3039d31e99ff9597102474b2,1579249719221; _ntes_nuid=945c26fb3039d31e99ff9597102474b2; mail_psc_fingerprint=e4bc670cddfbe347b317190361e8e608; nts_mail_user=yichenxuxyc@163.com:-1:1; Device-Id=dGhknPQrF1eZOQD8xTvE; _ga=GA1.2.1014128513.1595227554; _gid=GA1.2.1145760361.1595400256; Locale-Supported=zh-Hans; game=csgo; NTES_YD_SESS=eZd9u1.lvCkKl_v4geG1ltvF5SqvS1Rp6nNSFURxFK6td3GbdnHABwB86Nknt.eoM1mteq9J01cNeVP4m_ZBqX30LfZDIwwGpCmBgxMc8KGPEeMyI_84z_eh0isADvz7.msUmrvBqtieNEAvPgYJViJQvSegDuy_qnhZrSe0UpNMYUhZjM_Q2wOpP838lkxLw7THyC10QiUiPyaw75oZjHmAURSoc28sgh.8LpkEXDDm4; S_INFO=1595663356|0|3&80##|19975288075; P_INFO=19975288075|1595663356|1|netease_buff|00&99|null&null&null#zhj&330800#10#0|&0|null|19975288075; session=1-RT80ZfO3zqtJsPX1_3QVrtKDr-Nf8FHKhW4TtHXu7WP42042870615; csrf_token=ImU2NmJlODYyZWFjYjdjMzY2MGJmNWExMzU4OTZiNzhhODdmZjYyMWMi.Ef2Cpg.-wXSiy0KamSekNGWiLPfTuIgtTo'
     def send_request(self,url):
         cookie_dict = {
         }
         cookie_list = self.cookie.split('; ')
         for cookie in cookie_list:
             cookie_dict[cookie.split('=')[0]] = cookie.split('=')[1]
-        response = requests.get(url, headers = self.headers, timeout=10, cookies=cookie_dict)
+        UserAgent_pool = [
+            'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/14.0.835.163 Safari/535.1',
+
+            'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0',
+
+            'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50',
+
+            'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0; .NET CLR 2.0.50727; SLCC2; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.3; .NET4.0C; Tablet PC 2.0; .NET4.0E)',
+
+            'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; GTB7.0)',
+
+            'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/13.0.782.41 Safari/535.1 QQBrowser/6.9.11079.201',
+
+            'Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; WOW64; Trident/5.0)',
+
+            'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/5.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.3; .NET4.0C; .NET4.0E) QQBrowser/6.9.11079.201',
+            ]
+        IP_pool = [
+            '208.67.183.240: 80',
+            '148.240.94.5: 4145',
+            '50.207.130.238: 54321',
+            '161.35.46.103: 80',
+            '158.177.252.170: 3128'
+        ]
+        proxies = {'http': 'http://' + random.choice(IP_pool)}
+        headers = {'User-Agent': random.choice(UserAgent_pool)}
+        print(proxies)
+        print(headers)
+        response = requests.get(url, proxies = proxies, headers = headers, timeout=10, cookies=cookie_dict)
         time.sleep(5) #避免爬的过于频繁被网站认定为爬虫
+        print(response)
         result = json.loads(response.text) #每次获取respnse就转换为json格式
         return result
 
     def get_wanted(self, result):
         for item in result['data']['items']:
-            content = item['name']
+            name = item['name']
             price_buff = item['sell_min_price']
-            print(content)
+            price_steam = item['goods_info']['steam_price_cny']
+            discount_rate = (0.85*float(price_steam)-float(price_buff))/float(price_buff)
+            print(name)
             print(price_buff)
+            print(price_steam)
+            print(discount_rate)
+
     def get_url_list(self, result):
-        page_num = result['data']['total_page']
-        if page_num > 9:
-            page_num = 9
-        base_url = 'https://buff.163.com/api/market/goods?game=csgo&page_num={}&category=weapon_knife_m9_bayonet&sort_by=price.asc&_='
+        #page_num = result['data']['total_page']
+        #if page_num > 9:
+            #page_num = 9
+        base_url = 'https://buff.163.com/api/market/goods?game=csgo&page_num={}&category=weapon_ak47&sort_by=price.asc&_=1595668567958'
         url_list = []
-        for i in range(1, 3):
+        for i in range(7, 9):
             url = base_url.format(i)
             url_list.append(url)
         return url_list
+
     def run_spider(self):
         result = self.send_request(self.base_url)
         url_list = self.get_url_list(result)
